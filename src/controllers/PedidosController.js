@@ -80,8 +80,8 @@ module.exports = {
     },
        
     async searchCar(request, response) {
-        let id = request.params.idUsrCar;
-        let status = 'A';
+        let id = 1;
+        let status = 1;
 
         const car = await connection('pedidos')
             .where('pedCliId', id)
@@ -93,8 +93,6 @@ module.exports = {
             return response.status(400).json({ error: 'Não encontrou car. compras p/ este ID'});
         } 
 
-        console.log(car);
-        
         return response.json(car);
     },    
 
@@ -113,7 +111,7 @@ module.exports = {
             return response.status(400).json({ error: 'Não encontrou car. compras p/ este ID'});
         } 
 
-        console.log(car);
+        //console.log(car);
         
         return response.json(car);
     },
@@ -131,7 +129,7 @@ module.exports = {
             return response.status(400).json({ error: 'Não encontrou itens compras p/ este ID'});
         } 
 
-        console.log(item);
+        //console.log(item);
         
         return response.json(item);
     },

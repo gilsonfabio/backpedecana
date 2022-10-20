@@ -16,6 +16,9 @@ module.exports = {
         let email = request.params.email;
         let senha = request.params.password;
 
+        console.log(email);
+        console.log(senha);
+
         var encodedVal = crypto.createHash('md5').update(senha).digest('hex');
         const user = await connection('clientes')
             .where('cliEmail', email)
