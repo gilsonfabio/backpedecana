@@ -52,28 +52,28 @@ module.exports = {
             });
         }else {
             //console.log('Foi encontrado carrinho em aberto!')
-            const item = await connection('carItems')
-                .where('iteCarId', nroCar)
-                .where('iteCarProId', iteCarProId)
-                .increment('iteCarProQtde')
-                .increment({iteCarProVlrtotal: iteCarProVlrUnit} );
+            const item = await connection('pedItens')
+                .where('itePedId', nroCar)
+                .where('itePedProId', iteCarProId)
+                .increment('itePedQtde')
+                .increment({itePedVlrtotal: itePedVlrUnit} );
 
             if (!item) {
                 ultIte += 1 ;
-                const [item] = await connection('carItems').insert({
-                    iteCarId: nroCar, 
-                    iteCarIte: ultIte, 
-                    iteCarProId,
-                    iteCarProQtde,
-                    iteCarProVlrUnit,
-                    iteCarProVlrtotal: iteVlrTotal,
+                const [item] = await connection('oedItens').insert({
+                    itePedId: nroCar, 
+                    itePedIte: ultIte, 
+                    itePedProId,
+                    itePedQtde,
+                    itePedVlrUnit,
+                    itePedVlrtotal: iteVlrTotal,
                 });
             }
-            const cmp = await connection('carcompras')
-                .where('carId', nroCar)
-                .increment('carQtdTotal')
-                .increment({carVlrTotal: iteCarProVlrUnit} )
-                .increment({carVlrPagar: iteCarProVlrUnit} );
+            const cmp = await connection('pedidos')
+                .where('pedId', nroCar)
+                .increment('pedQtdTotal')
+                .increment({pedVlrTotal: itePedVlrUnit} )
+                .increment({pedVlrPagar: itePedVlrUnit} );
         } 
 
         return response.json(car);
@@ -83,7 +83,7 @@ module.exports = {
         let id = request.params.idUsrCar;
         let status = 'A';
 
-        const car = await connection('carcompras')
+        const car = await connection('pedidos')
             .where('pedCliId', id)
             .where('pedStatus', status)
             .select('pedId', 'pedQtdtotal')
@@ -102,11 +102,11 @@ module.exports = {
         let id = request.params.carId;
         let status = 'A';
 
-        const car = await connection('carcompras')
-            .where('carId', id)
-            .where('carStatus', status)
-            .join('usrMovies', 'usrId', 'carcompras.carUser')
-            .select(['carcompras.*', 'usrMovies.usrNome'])
+        const car = await connection('pedidos')
+            .where('pedId', id)
+            .where('pedStatus', status)
+            .join('clientes', 'cliId', 'pedidos.pedCliId')
+            .select(['pedidos.*', 'clientes.cliNome'])
             .first();
           
         if (!car) {
@@ -122,10 +122,10 @@ module.exports = {
         let id = request.params.carId;
         let status = 'A';
 
-        const item = await connection('carItems')
-            .where('iteCarId', id) 
-            .join('produtos', 'idProd', 'carItems.iteCarProId')
-            .select(['carItems.*', 'produtos.proDescricao', 'produtos.proReferencia', 'produtos.proAvatar'])
+        const item = await connection('pedItens')
+            .where('itePedId', id) 
+            .join('produtos', 'prdId', 'pedtens.itePedProId')
+            .select(['pedItens.*', 'produtos.prdDescricao', 'produtos.prdReferencia', 'produtos.prdUrlPhoto'])
           
         if (!item) {
             return response.status(400).json({ error: 'Não encontrou itens compras p/ este ID'});
@@ -150,17 +150,17 @@ module.exports = {
         //console.log('produto:', proId);
         //console.log('preço-U:', prcUnit);
 
-        const car = await connection('carcompras')
-            .where('carId', id)
-            .increment('carQtdTotal')
-            .increment({carVlrTotal: prcUnit} )
-            .increment({carVlrPagar: prcUnit} );
+        const car = await connection('pedidos')
+            .where('pedId', id)
+            .increment('pedQtdTotal')
+            .increment({pedVlrTotal: prcUnit} )
+            .increment({pedVlrPagar: prcUnit} );
         
-        const item = await connection('carItems')
-            .where('iteCarId',id)
-            .where('iteCarProId', proId)
-            .increment('iteCarProQtde')
-            .increment({iteCarProVlrtotal: prcUnit} );
+        const item = await connection('pedItens')
+            .where('itePedId',id)
+            .where('itePedProId', proId)
+            .increment('itePedQtde')
+            .increment({itePedVlrtotal: prcUnit} );
 
         return response.json(car);
     },
@@ -179,17 +179,17 @@ module.exports = {
         //console.log('produto:', proId);
         //console.log('preço-U:', prcUnit);
 
-        const car = await connection('carcompras')
-            .where('carId', id)
-            .decrement('carQtdTotal')
-            .decrement({carVlrTotal: prcUnit} )
-            .decrement({carVlrPagar: prcUnit} );
+        const car = await connection('pedidos')
+            .where('pedId', id)
+            .decrement('pedQtdTotal')
+            .decrement({pedVlrTotal: prcUnit} )
+            .decrement({pedVlrPagar: prcUnit} );
         
-        const item = await connection('carItems')
-            .where('iteCarId',id)
-            .where('iteCarProId', proId)
-            .decrement('iteCarProQtde')
-            .decrement({iteCarProVlrtotal: prcUnit} );
+        const item = await connection('pedItens')
+            .where('itePedId',id)
+            .where('itePedProId', proId)
+            .decrement('itePedQtde')
+            .decrement({itePedVlrtotal: prcUnit} );
 
         return response.json(car);
     },
