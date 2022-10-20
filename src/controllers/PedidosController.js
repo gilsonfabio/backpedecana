@@ -80,7 +80,7 @@ module.exports = {
     },
        
     async searchCar(request, response) {
-        let id = 1;
+        let id = request.params.idUsrCar;
         let status = 1;
 
         const car = await connection('pedidos')
