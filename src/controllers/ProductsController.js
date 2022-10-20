@@ -28,11 +28,11 @@ module.exports = {
            
         return response.json({prdId});
     },
-    
+
     async detProduct(request, response) {
         let id = request.params.proId;
         const product = await connection('produtos')
-            .where('idProd', id)
+            .where('prdId', id)
             .select('*')
             .first();
           
