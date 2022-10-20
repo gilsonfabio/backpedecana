@@ -10,7 +10,7 @@ module.exports = {
     
     async carcompras(request, response) {
         
-        console.log(request.body);
+        //console.log(request.body);
         const { pedData, pedCliId, pedQtdTotal, pedVlrTotal, pedCupom, pedVlrPagar, pedEndEntrega,
              pedVlrTaxEntrega, pedFrmPagto, itePedProId, itePedQtde, itePedVlrUnit} = request.body;
         let id = request.body.pedCliId;
