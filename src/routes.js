@@ -5,6 +5,7 @@ const UsersController = require('./controllers/UsersController');
 const ProductsController = require('./controllers/ProductsController');
 const GruposController = require('./controllers/GruposController');
 const LinhasController = require('./controllers/LinhasController');
+const PedidosController = require('./controllers/PedidosController');
 
 routes.get('/', (request, response) => {
     response.json({
@@ -24,5 +25,13 @@ routes.post('/newgrupo', GruposController.create);
 
 routes.get('/linhas', LinhasController.index);
 routes.post('/newlinha', LinhasController.create);
+
+routes.post('/newprocar', PedidosController.carcompras);
+routes.get('/searchCar/:idUsrCar', PedidosController.searchCar);
+routes.get('/headerCar/:carId', PedidosController.headerCar);
+routes.get('/itemsCar/:carId', PedidosController.itemsCar);
+routes.post('/adiprocar', PedidosController.adiprocar);
+routes.post('/subprocar', PedidosController.subprocar);
+
 
 module.exports = routes;
