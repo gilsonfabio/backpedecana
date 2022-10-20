@@ -14,7 +14,7 @@ module.exports = {
         const { pedData, pedCliId, pedQtdTotal, pedVlrTotal, pedCupom, pedVlrPagar, pedEndEntrega,
              pedVlrTaxEntrega, pedFrmPagto, itePedProId, itePedQtde, itePedVlrUnit} = request.body;
         let id = request.body.pedCliId;
-        let status = 'A';
+        let status = 1;
         let iteVlrTotal = itePedQtde * itePedVlrUnit;
         let iteNro = 1;
         const car = await connection('pedidos')
@@ -60,7 +60,7 @@ module.exports = {
 
             if (!item) {
                 ultIte += 1 ;
-                const [item] = await connection('oedItens').insert({
+                const [item] = await connection('pedItens').insert({
                     itePedId: nroCar, 
                     itePedIte: ultIte, 
                     itePedProId,
