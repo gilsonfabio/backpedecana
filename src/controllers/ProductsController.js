@@ -28,4 +28,20 @@ module.exports = {
            
         return response.json({prdId});
     },
+    
+    async detProduct(request, response) {
+        let id = request.params.proId;
+        const product = await connection('produtos')
+            .where('idProd', id)
+            .select('*')
+            .first();
+          
+        if (!product) {
+            return response.status(400).json({ error: 'Produto nao encontrado'});
+        } 
+
+        //console.log(product);
+
+        return response.json(product);
+    },
 };

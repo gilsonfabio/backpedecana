@@ -18,7 +18,8 @@ routes.get('/signIn/:email/:password', UsersController.signIn);
 routes.post('/newuser', UsersController.create);
 
 routes.get('/products', ProductsController.index);
-routes.post('/newproduct', UsersController.create);
+routes.post('/newproduct', ProductsController.create);
+routes.get('/detproduct/:proId', ProductsController.detProduct);
 
 routes.get('/grupos', GruposController.index);
 routes.post('/newgrupo', GruposController.create);
