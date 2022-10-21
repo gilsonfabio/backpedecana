@@ -24,7 +24,7 @@ module.exports = {
             .first();
         
         let nroCar = car.pedId;
-        let ultIte = car.pedQtdTotal;
+        let ultIte = car.pedUltItem;
 
         if (!car) {
             const [pedId] = await connection('pedidos').insert({
@@ -37,14 +37,15 @@ module.exports = {
                 pedEndEntrega,
                 pedVlrTaxEntrega, 
                 pedFrmPagto,
-                pedStatus: status, 
+                pedStatus: status,
+                pedUltItem: iteNro 
             });
 
             //console.log('criado o carrinho n.: ', pedId )
 
             const [item] = await connection('pedItens').insert({
                 itePedId: pedId, 
-                itePedIte: iteNro, 
+                itePedItem: iteNro, 
                 itePedProId,
                 itePedQtde,
                 itePedVlrUnit,
@@ -54,7 +55,7 @@ module.exports = {
             //console.log('Foi encontrado carrinho em aberto!')
             const item = await connection('pedItens')
                 .where('itePedId', nroCar)
-                .where('itePedProId', iteCarProId)
+                .where('itePedProId', itePedProId)
                 .increment('itePedQtde')
                 .increment({itePedVlrtotal: itePedVlrUnit} );
 
@@ -62,20 +63,27 @@ module.exports = {
                 ultIte += 1 ;
                 const [item] = await connection('pedItens').insert({
                     itePedId: nroCar, 
-                    itePedIte: ultIte, 
+                    itePedItem: ultIte, 
                     itePedProId,
                     itePedQtde,
                     itePedVlrUnit,
                     itePedVlrtotal: iteVlrTotal,
                 });
-            }
-            const cmp = await connection('pedidos')
-                .where('pedId', nroCar)
-                .increment('pedQtdTotal')
-                .increment({pedVlrTotal: itePedVlrUnit} )
-                .increment({pedVlrPagar: itePedVlrUnit} );
-        } 
 
+                const cmp = await connection('pedidos')
+                    .where('pedId', nroCar)
+                    .increment('pedQtdTotal')
+                    .increment('pedUltItem')
+                    .increment({pedVlrTotal: itePedVlrUnit} )
+                    .increment({pedVlrPagar: itePedVlrUnit} );
+            }else {
+                const cmp = await connection('pedidos')
+                    .where('pedId', nroCar)
+                    .increment('pedQtdTotal')
+                    .increment({pedVlrTotal: itePedVlrUnit} )
+                    .increment({pedVlrPagar: itePedVlrUnit} );
+                }
+        } 
         return response.json(car);
     },
        
@@ -98,7 +106,9 @@ module.exports = {
 
     async headerCar(request, response) {
         let id = request.params.carId;
-        let status = 'A';
+        let status = 1;
+        
+        console.log('Pedido de compra:', id);
 
         const car = await connection('pedidos')
             .where('pedId', id)
@@ -111,36 +121,35 @@ module.exports = {
             return response.status(400).json({ error: 'Não encontrou car. compras p/ este ID'});
         } 
 
-        //console.log(car);
+        console.log(car);
         
         return response.json(car);
     },
 
     async itemsCar(request, response) {
         let id = request.params.carId;
-        let status = 'A';
 
         const item = await connection('pedItens')
             .where('itePedId', id) 
-            .join('produtos', 'prdId', 'pedtens.itePedProId')
+            .join('produtos', 'prdId', 'pedItens.itePedProId')
             .select(['pedItens.*', 'produtos.prdDescricao', 'produtos.prdReferencia', 'produtos.prdUrlPhoto'])
           
         if (!item) {
             return response.status(400).json({ error: 'Não encontrou itens compras p/ este ID'});
         } 
 
-        //console.log(item);
+        console.log(item);
         
         return response.json(item);
     },
 
     async adiprocar(request, response) {
         
-        const { iteCarId, iteCarProId} = request.body;
+        const { itePedId, itePedProId} = request.body;
         
-        let id = request.body.iteCarId;
-        let proId = request.body.iteCarProId;
-        let prcUnit = request.body.iteCarProVlrUnit;
+        let id = request.body.itePedId;
+        let proId = request.body.itePedProId;
+        let prcUnit = request.body.itePedVlrUnit;
 
         //console.log(request.body);
 
@@ -165,11 +174,11 @@ module.exports = {
         
     async subprocar(request, response) {
         
-        const { iteCarId, iteCarProId} = request.body;
+        const { itePedId, itePedProId} = request.body;
         
-        let id = request.body.iteCarId;
-        let proId = request.body.iteCarProId;
-        let prcUnit = request.body.iteCarProVlrUnit;
+        let id = request.body.itePedId;
+        let proId = request.body.itePedProId;
+        let prcUnit = request.body.itePedVlrUnit;
 
         //console.log(request.body);
 
@@ -192,3 +201,34 @@ module.exports = {
         return response.json(car);
     },
 };
+
+
+/*
+
+//console.log('Foi encontrado carrinho em aberto!')
+            const item = await connection('pedItens')
+                .where('itePedId', nroCar)
+                .where('itePedProId', itePedProId)
+                .increment('itePedQtde')
+                .increment({itePedVlrtotal: itePedVlrUnit} );
+
+            if (!item) {
+                ultIte += 1 ;
+                const [item] = await connection('pedItens').insert({
+                    itePedId: nroCar, 
+                    itePedItem: ultIte, 
+                    itePedProId,
+                    itePedQtde,
+                    itePedVlrUnit,
+                    itePedVlrtotal: iteVlrTotal,
+                });
+            }
+            const cmp = await connection('pedidos')
+                .where('pedId', nroCar)
+                .increment('pedQtdTotal')
+                .increment({pedVlrTotal: itePedVlrUnit} )
+                .increment({pedVlrPagar: itePedVlrUnit} );
+        } 
+
+
+*/
