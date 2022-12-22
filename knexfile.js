@@ -4,10 +4,10 @@ module.exports = {
   development: {
     client: '',
     connection: {
-      host : process.env.DATABASE_URL,
-      database: process.env.DATABASE_NAME,
-      user: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD
+      host : "pedecana.mysql.dbaas.com.br",
+      database: "pedecana",
+      user: "pedecana",
+      password: "Admin@3112"
     },
     migrations: {
       directory: ''
@@ -34,10 +34,10 @@ module.exports = {
   production: {
     client: 'mysql',
     connection: {
-      host : process.env.DATABASE_URL,
-      database: process.env.DATABASE_NAME,
-      user: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD
+      host : "pedecana.mysql.dbaas.com.br",
+      database: "pedecana",
+      user: "pedecana",
+      password: "Admin@3112"
     },
     
     pool: {

@@ -7,6 +7,8 @@ module.exports = {
         .orderBy('grpDescricao')
         .select('*');
     
+        console.log(grupos);
+        
         return response.json(grupos);
     },    
         
@@ -17,5 +19,5 @@ module.exports = {
         });
            
         return response.json({grpId});
-    },
+    },    
 };

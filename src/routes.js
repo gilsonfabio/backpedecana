@@ -6,6 +6,7 @@ const ProductsController = require('./controllers/ProductsController');
 const GruposController = require('./controllers/GruposController');
 const LinhasController = require('./controllers/LinhasController');
 const PedidosController = require('./controllers/PedidosController');
+const CheckoutController = require('./controllers/CheckoutController');
 
 routes.get('/', (request, response) => {
     response.json({
@@ -34,5 +35,6 @@ routes.get('/itemsCar/:carId', PedidosController.itemsCar);
 routes.post('/adiprocar', PedidosController.adiprocar);
 routes.post('/subprocar', PedidosController.subprocar);
 
+routes.post('/checkout', CheckoutController.checkout);
 
 module.exports = routes;
