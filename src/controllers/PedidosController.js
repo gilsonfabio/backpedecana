@@ -108,7 +108,7 @@ module.exports = {
         let id = request.params.carId;
         let status = 1;
         
-        console.log('Pedido de compra:', id);
+        //console.log('Pedido de compra:', id);
 
         const car = await connection('pedidos')
             .where('pedId', id)
@@ -138,7 +138,7 @@ module.exports = {
             return response.status(400).json({ error: 'Não encontrou itens compras p/ este ID'});
         } 
 
-        console.log(item);
+        //console.log(item);
         
         return response.json(item);
     },

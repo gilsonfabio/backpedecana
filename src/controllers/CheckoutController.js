@@ -20,25 +20,36 @@ module.exports = {
     },
 
     async checkout (request, response) {
+        //console.log(request.body)
+          
         mercadopago.configurations.setAccessToken(process.env.ACCESS_TOKEN);
         mercadopago.configure({
-            access_token: process.env.ACCESS_TOKEN
+          access_token: process.env.ACCESS_TOKEN
         });
-        
-        var preference = {
-          items: [
-            {
-              title: 'Test',
-              quantity: 1,
-              currency_id: 'ARS',
-              unit_price: 10.5
-            }
-          ],
-          notification_url: ""
+
+        let preference = {
+          items: [{
+            title: 'Cerveja Heineken, Long Neck 330ml',
+            quantity: 1,
+            currency_id: 'BRL',
+            unit_price: 5.60
+          }],
+          payer: {
+            email: 'nivearabellosm@gmail.com',
+            name: 'Nivea',
+            surname: 'Rabello',
+          },
+          payment_methods: {
+            installments: 3
+          }
         };
-        
-        mercadopago.preferences.create(preference)
-        
+
+        mercadopago.preferences.create(preference).then(function (data) {
+          console.log(data)
+          response.send(JSON.stringify(data.response.sandbox_init_point));
+        }).catch(function (error) {
+          console.log(error);
+        })
     },
     
 };
