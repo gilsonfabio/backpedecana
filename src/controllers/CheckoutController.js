@@ -20,8 +20,15 @@ module.exports = {
     },
 
     async checkout (request, response) {
-        //console.log(request.body)
-          
+        console.log('dados do body:',request.body)    
+        let proPreco = request.body.testeJson.price;
+        let endereco = request.body.testeJson.address;
+        let emailCli = request.body.testeJson.cliEmail;
+        let nomeCli = request.body.testeJson.cliNome;
+
+        console.log(proPreco);
+        console.log(endereco);
+        
         mercadopago.configurations.setAccessToken(process.env.ACCESS_TOKEN);
         mercadopago.configure({
           access_token: process.env.ACCESS_TOKEN
@@ -29,15 +36,19 @@ module.exports = {
 
         let preference = {
           items: [{
-            title: 'Cerveja Heineken, Long Neck 330ml',
+            title: endereco,
             quantity: 1,
             currency_id: 'BRL',
-            unit_price: 5.60
+            unit_price: parseFloat(proPreco)
           }],
           payer: {
-            email: 'nivearabellosm@gmail.com',
-            name: 'Nivea',
-            surname: 'Rabello',
+            email: emailCli,
+            name: nomeCli
+          },
+          back_urls:{
+            failure: "https://innvento.com.br/failure",
+            pending: "https://innvento.com.br/pending",
+            success: "https://innvento.com.br/success",
           },
           payment_methods: {
             installments: 3

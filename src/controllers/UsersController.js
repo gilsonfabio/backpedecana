@@ -34,20 +34,24 @@ module.exports = {
     },
     
     async create(request, response) {
-        const {cliNome, cliApelido, cliEmail, cliPassword, cliCelular, cliCpf, cliNascimento, cliPontos, cliUltLocalizacao, cliStatus} = request.body;
+        console.log(request.body);
+        const {nome, cpf, nascimento, email, celular , password} = request.body;
+        let cliApelido = nome;
+        let cliPontos = 0;
+        let cliUltLocalizacao = 1;
         var status = 'A'; 
-        var senha = crypto.createHash('md5').update(usrPassword).digest('hex');
+        var senha = crypto.createHash('md5').update(password).digest('hex');
         const [cliId] = await connection('clientes').insert({
-            cliNome, 
+            cliNome: nome, 
             cliApelido, 
-            cliEmail, 
-            cliPassword,
-            cliCelular, 
-            cliCpf, 
-            cliNascimento, 
+            cliEmail: email, 
+            cliPassword: senha,
+            cliCelular: celular, 
+            cliCpf: cpf, 
+            cliNascimento: nascimento, 
             cliPontos, 
             cliUltLocalizacao, 
-            cliStatus
+            cliStatus: status
         });
            
         return response.json({cliId});

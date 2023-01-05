@@ -23,9 +23,6 @@ module.exports = {
             .select('*')
             .first();
         
-        let nroCar = car.pedId;
-        let ultIte = car.pedUltItem;
-
         if (!car) {
             const [pedId] = await connection('pedidos').insert({
                 pedData, 
@@ -52,6 +49,8 @@ module.exports = {
                 itePedVlrtotal: iteVlrTotal,
             });
         }else {
+            let nroCar = car.pedId;
+            let ultIte = car.pedUltItem;
             //console.log('Foi encontrado carrinho em aberto!')
             const item = await connection('pedItens')
                 .where('itePedId', nroCar)
@@ -90,6 +89,8 @@ module.exports = {
     async searchCar(request, response) {
         let id = request.params.idUsrCar;
         let status = 1;
+
+        console.log('Procurando carrinho de compras do usuário:',id);
 
         const car = await connection('pedidos')
             .where('pedCliId', id)
@@ -198,14 +199,27 @@ module.exports = {
             .decrement('itePedQtde')
             .decrement({itePedVlrtotal: prcUnit} );
 
+        const product = await connection('pedItens')
+            .where('itePedId',id)
+            .where('itePedProId', proId)
+            .first();
+                
+        if (product.itePedQtde === 0) {
+            await connection('pedItens')
+                .where('itePedId',id)
+                .where('itePedProId', proId)
+                .delete();            
+        }    
+
         return response.json(car);
+           
     },
 };
 
 
 /*
 
-//console.log('Foi encontrado carrinho em aberto!')
+//      console.log('Foi encontrado carrinho em aberto!')
             const item = await connection('pedItens')
                 .where('itePedId', nroCar)
                 .where('itePedProId', itePedProId)
