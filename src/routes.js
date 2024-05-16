@@ -7,6 +7,7 @@ const GruposController = require('./controllers/GruposController');
 const LinhasController = require('./controllers/LinhasController');
 const PedidosController = require('./controllers/PedidosController');
 const CheckoutController = require('./controllers/CheckoutController');
+const EfipayController = require('./controllers/EfipayController');
 
 routes.get('/', (request, response) => {
     response.json({
@@ -14,13 +15,15 @@ routes.get('/', (request, response) => {
     });
 });
 
-routes.get('/users', UsersController.index);
-routes.get('/signIn/:email/:password', UsersController.signIn);
-routes.post('/newuser', UsersController.create);
+routes.post('/signIn', UsersController.signIn);
+routes.post('/newuser', UsersController.newuser);
+routes.get('/busAddress/:idUsr', UsersController.busAddress);
 
-routes.get('/products', ProductsController.index);
+routes.get('/produtos', ProductsController.index);
 routes.post('/newproduct', ProductsController.create);
 routes.get('/detproduct/:proId', ProductsController.detProduct);
+routes.get('/searchPro/:idPro', ProductsController.searchPro);
+routes.get('/linprodutos/:idLnh', ProductsController.lnhProdutos);
 
 routes.get('/grupos', GruposController.index);
 routes.post('/newgrupo', GruposController.create);
@@ -36,5 +39,9 @@ routes.post('/adiprocar', PedidosController.adiprocar);
 routes.post('/subprocar', PedidosController.subprocar);
 
 routes.post('/checkout', CheckoutController.checkout);
+
+routes.post('/authorize', EfipayController.auth);
+routes.post('/webhook', EfipayController.webhook);
+routes.post('/certificado', EfipayController.certificado);
 
 module.exports = routes;

@@ -44,4 +44,37 @@ module.exports = {
 
         return response.json(product);
     },
+
+    async searchPro(request, response) {
+        let id = request.params.idPro;
+
+        console.log('Procurando produto com o Id:',id);
+
+        const produto = await connection('produtos')
+            .where('prdId', id)
+            .select('*')
+            .first();
+          
+        if (!produto) {
+            return response.status(400).json({ error: 'Não encontrou produto c/ este ID'});
+        } 
+
+        return response.json(produto);
+    },
+    
+    async lnhProdutos(request, response) {
+        let id = request.params.idLnh;
+
+        console.log('Procurando produtos da linha Id:',id);
+
+        const produtos = await connection('produtos')
+            .where('prdLinha', id)
+            .select('*');
+          
+        if (!produtos) {
+            return response.status(400).json({ error: 'Não encontrou produto c/ este ID'});
+        } 
+
+        return response.json(produtos);
+    },
 };

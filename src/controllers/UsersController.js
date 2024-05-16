@@ -1,39 +1,53 @@
-const { Console } = require('console');
-const crypto = require('crypto');
-const { addListener } = require('../database/connection');
 const connection = require('../database/connection');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+require('dotenv/config');
 
-module.exports = {   
-    async index (request, response) {
-        const users = await connection('clientes')
-        .orderBy('cliNome')
-        .select('*');
+module.exports = {       
     
-        return response.json(users);
-    },    
-        
     async signIn(request, response) {
-        let email = request.params.email;
-        let senha = request.params.password;
+        let email = request.body.email;
+        let senha = request.body.password;
 
-        console.log(email);
-        console.log(senha);
+        console.log('Email:', email);
+        console.log('Password:', senha);
 
-        var encodedVal = crypto.createHash('md5').update(senha).digest('hex');
-        const user = await connection('clientes')
+        const usuario = await connection('clientes')
             .where('cliEmail', email)
-            .where('cliPassword', encodedVal)
-            .select('cliId', 'cliNome')
+            .select(`cliId`, `cliNome`, `cliEmail`, `cliPassword`)
             .first();
-          
-        if (!user) {
-            return response.status(400).json({ error: 'Não encontrou cliente com este ID'});
+        
+        if (!usuario) {            
+            return response.status(400).json({ error: 'Não encontrou usuário com este ID'});
         } 
 
+        //console.log(user.usrPassword)
+        //let pass = usuario.usrPassword;
+        //const match = await bcrypt.compare(senha, pass)
+
+        //if(!match) {
+        //    return response.status(403).send({ auth: false, message: 'User invalid!' });
+        //}
+
+        const user = {
+            id: usuario.cliId,
+            name: usuario.cliNome,
+            email: usuario.cliEmail
+        }
+
+        //let token = jwt.sign({ id: user.usrId, name: user.usrNome, email: user.usrEmail, nivel: user.usrNivAcesso }, process.env.SECRET_JWT, {
+        //    expiresIn: '1h'
+        //});
+        //let refreshToken = jwt.sign({ id: user.usrId, name: user.usrNome, email: user.usrEmail, nivel: user.usrNivAcesso  }, process.env.SECRET_JWT_REFRESH, {
+        //    expiresIn: '2h'
+        //});
+        console.log(user);
+        
         return response.json(user);
+
     },
-    
-    async create(request, response) {
+
+    async newuser(request, response) {
         console.log(request.body);
         const {nome, cpf, nascimento, email, celular , password} = request.body;
         let cliApelido = nome;
@@ -55,5 +69,26 @@ module.exports = {
         });
            
         return response.json({cliId});
+    },
+
+    async busAddress(request, response) {
+        let id = request.params.idUsr;
+
+        //console.log('Procurando endereço do usuario:',id);
+
+        const endereco = await connection('enderecos')
+            .where('endCliId', id)
+            .join('clientes', 'cliId', 'enderecos.endCliId')
+            .join('bairros', 'baiId', 'enderecos.endBairro')
+            .join('cidades', 'cidId', 'enderecos.endCidade')
+            .select(['enderecos.*', 'clientes.cliNome', 'clientes.cliEmail', 'clientes.cliCelular', 'bairros.baiDescricao', 'cidades.cidDescricao']);
+          
+        if (!endereco) {
+            return response.status(400).json({ error: 'Não encontrou usuario c/ este ID'});
+        } 
+
+        //console.log(endereco)
+
+        return response.json(endereco);
     },
 };
